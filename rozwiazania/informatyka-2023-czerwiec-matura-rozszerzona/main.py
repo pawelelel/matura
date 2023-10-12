@@ -27,7 +27,7 @@ Zadanie 1.2
 Zadanie 1.3
 
 z=0
-dopoki y<=1 wykonuj:
+dopoki y>=1 wykonuj:
     jeżeli y mod 2 = 1
         z=z+x
     x=x+x
@@ -90,7 +90,60 @@ def Zadanie24():
         sufiksy.sort()
         print(sufiksy[0])
 
+def Zadanie31():
+    liczby = open('anagram.txt').readlines()
+    rowne=0
+    prawie=0
+    for l in liczby:
+        jeden = 0
+        zero = 0
+        for c in str(l):
+            if c == '1':
+                jeden = jeden+1
+            else:
+                if c== '0':
+                    zero=zero+1
+        if jeden == zero:
+            rowne=rowne+1
+        if jeden-zero == 1 or jeden-zero == -1:
+            prawie=prawie+1
+    print(rowne, prawie)
+
+def Anagram(liczba):
+    liczby = []
+    for i in liczba:
+        if i == '0':
+            continue
+        l = str(i)
+        for j in liczba:
+            l = l + str(j)
+        liczby.append(l)
+    #print(liczby)
+    return len(liczby)
+
+def Zadanie32():
+    liczby = open('przyklad.txt').readlines()
+    lista = []
+    for l in liczby:
+        if len(l) != 8:
+            continue
+        lista.append((l, Anagram(str(l))))
+    return lista.sort()
+
+'''
+
+Zadanie 4
+1. 101201 351
+2. 2112221 2487
+
+Zadanie 5
+PP
+
+'''
+
+
 def main():
-    print(Zadanie24())
+    print(Anagram('11100'))
+    #print(Zadanie32())
 
 main()
