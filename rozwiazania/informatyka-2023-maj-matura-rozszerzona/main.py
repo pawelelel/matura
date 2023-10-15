@@ -97,25 +97,100 @@ Zadanie 2.4
 123
 '''
 
-def xor(a, b):
-    a = bin(a)
-    b = bin(b)
-    xor = ''
-    for i in a:
-
-    return xor
-
 def Zadanie25():
-    lines = open('bin_przyklad.txt').readlines()
+    lines = open('bin.txt').readlines()
     odp = open('wyniki2_5.txt', 'w')
     for l in lines:
         a = int(l, 2) // 2
-        wynik = xor(int(l), a)
-        odp.write(wynik)
+        wynik = int(l, 2)^a
+        odp.write(str(bin(wynik)[2::]) + '\n')
     odp.close()
 
 def Zadanie31():
+    lines = open('pi.txt').readlines()
+    ile = 0
+    for l in range(1, len(lines)):
+        jeden = int(lines[l-1])
+        dwa = int(lines[l])
+        if (10*jeden+dwa > 90):
+            ile = ile + 1
+    return ile
 
+def Zadanie32():
+    lines = open('pi.txt').readlines()
+    dict = {}
+    for i in range(10):
+        dict['0' + str(i)] = 0
+    for i in range(10, 100):
+        dict[str(i)] = 0
+
+    for l in range(1, len(lines)):
+        jeden = int(lines[l-1])
+        dwa = int(lines[l])
+        dict[str(jeden) + str(dwa)] = dict[str(jeden) + str(dwa)] + 1
+
+    max = -1
+    maxPoz = '-1'
+    min = 10000000
+    minPoz = '-1'
+    for i in dict:
+        if dict[i] < min:
+            min = dict[i]
+            minPoz = i
+        if dict[i] > max:
+            max = dict[i]
+            maxPoz = i
+    print( minPoz  + ' ' + str(min))
+    print( maxPoz  + ' ' + str(max))
+
+
+def Zadanie33():
+    ile = 0
+    lines = open('pi.txt').readlines()
+    for i in range(5, len(lines) - 1):
+        jeden = int(lines[i - 5])
+        dwa = int(lines[i - 4])
+        trzy = int(lines[i - 3])
+        cztery = int(lines[i - 2])
+        piec = int(lines[i - 1])
+        szesc = int(lines[i])
+        if (jeden <= dwa and dwa <= trzy and trzy >= cztery and cztery >= piec and piec >= szesc):
+            ile = ile + 1
+    return ile
+
+def CzyRosnacomalejacy(ciag):
+    for i in range(1, len(ciag) // 2):
+        jeden = ciag[i-1]
+        dwa = ciag[i]
+        if dwa < jeden:
+            return False
+    for i in range(len(ciag) // 2 + 1, len(ciag)):
+        jeden = ciag[i - 1]
+        dwa = ciag[i]
+        if dwa > jeden:
+            return False
+    return True
+
+def Zadanie34():
+    lines = open('pi.txt').readlines()
+    miejsce = -1
+    ciag = ''
+    najdluzszyCiag = ''
+    for i in range(len(lines)):
+        ciag = ''
+        for j in range(i, len(lines)):
+            ciag = ciag + lines[j][:1]
+            if CzyRosnacomalejacy(ciag):
+                if len(ciag) > len(najdluzszyCiag):
+                    najdluzszyCiag = ciag
+                    miejsce = i + 1
+    print(miejsce)
+    print(najdluzszyCiag)
+    '''
+    758
+    113499999983
+    '''
+        
 '''
 Zadanie 4
 PF
@@ -126,5 +201,36 @@ Zadanie 5
 (2222)3 < (1111)6
 '''
 
+def Zadanie63():
+    lines = open('owoce.txt').readlines()
+    lines.pop(0)
+
+    # ilosc owocow w chlodni
+    owoce = {'maliny': 0, 'truskawki': 0, 'porzeczki': 0}
+
+    # zrobione konfiturki
+    konfitury = {'malinowo-truskawkowa': 0, 'malinowo-porzeczkowa': 0, 'truskawkowo-porzeczkowa': 0}
+
+    for l in lines:
+        l = l.split('\t')
+        owoce['maliny'] = owoce['maliny'] + int(l[1])
+        owoce['truskawki'] = owoce['truskawki'] + int(l[2])
+        owoce['porzeczki'] = owoce['porzeczki'] + int(l[3][::1])
+
+
+
+
+
+
+
+
+
+        print(owoce)
+
+    return -1
+
+def Zadanie64():
+    return -1
+
 if __name__ == '__main__':
-    print()
+    print(Zadanie63())
