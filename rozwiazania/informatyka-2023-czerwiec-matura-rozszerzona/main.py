@@ -130,6 +130,9 @@ def Zadanie32():
         lista.append((l, Anagram(str(l))))
     return lista.sort()
 
+def Zadnie33():
+    return -1
+
 '''
 
 Zadanie 4

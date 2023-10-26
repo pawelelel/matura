@@ -209,13 +209,31 @@ def Zadanie63():
     owoce = {'maliny': 0, 'truskawki': 0, 'porzeczki': 0}
 
     # zrobione konfiturki
-    konfitury = {'malinowo-truskawkowa': 0, 'malinowo-porzeczkowa': 0, 'truskawkowo-porzeczkowa': 0}
+    #konfitury = {'malinowo-truskawkowa': 0, 'truskawkowo-malinowa': 0, 'malinowo-porzeczkowa': 0, 'porzeczkowo-malinowa': 0, 'truskawkowo-porzeczkowa': 0, 'porzeczkowo-truskawkowa': 0}
+    konfitury = {'malinowo-truskawkowa': 0, 'malinowo-porzeczkowa': 0,'truskawkowo-porzeczkowa': 0}
 
     for l in lines:
         l = l.split('\t')
         owoce['maliny'] = owoce['maliny'] + int(l[1])
         owoce['truskawki'] = owoce['truskawki'] + int(l[2])
         owoce['porzeczki'] = owoce['porzeczki'] + int(l[3][::1])
+
+
+
+
+
+
+
+
+        owoce['maliny'] - owoce['truskawki']
+        owoce['truskawki'] - owoce['maliny']
+
+        owoce['maliny'] - owoce['porzeczki']
+        owoce['porzeczki'] - owoce['maliny']
+
+        owoce['truskawki'] - owoce['porzeczki']
+        owoce['porzeczki'] - owoce['truskawki']
+
 
 
 
