@@ -16,7 +16,6 @@ Template tabelki:
 |       |       |       |
 -------------------------
 '''
-import math
 
 
 #Rozdzial 1
@@ -1457,21 +1456,987 @@ Zadanie 23.2
 # Zadanie 23.3
 
 def pierwiastek(x):
+    p = 0
     x1 = x / 2
     dalej = True
     while dalej:
         x1 = (x1 + x/x1) / 2
-        p = math.floor(x1)
-        if p*p and (p+1)*(p+1)>x:
+        #p = math.floor(x1)
+        if p*p <= x and (p+1)*(p+1)>x:
             dalej = False
+        if (p-1)*(p-1) <= x and p*p > x:
+            p=p-1
+            dalej=False
+    return p
+
+
+# Zadanie 24
+
+def szukacz(p, k, e, T):
+    if k == p:
+        if T[p - 1] > e:
+            return p
+        else:
+            return p + 1
+    else:
+        s = (p + k) // 2
+        if T[s - 1] > e:
+            return szukacz(p, s, e, T)
+        else:
+            return szukacz(s+1, k, e, T)
+
+'''
+funkcja F (p, k, e)
+    jeżeli (k = p)
+        jeżeli (T [p] > e)
+                zwróć p i zakończ
+            w przeciwnym razie
+                zwróć p + 1 i zakończ
+        w przeciwnym razie
+            s ← (p+k) div 2
+            jeżeli T [s] > e
+                zwróć F (p, s, e)
+            w przeciwnym razie
+                zwróć F (s+1, k, e)
+
+Zadanie 24.1
+-----------------------------------
+|           T          | F(p,k,e) |
+|----------------------+----------|
+|   [3, 4, 6, 8, 9]    |    6     |
+|----------------------+----------|
+| [15, 16, 18, 22, 24] |    1     |
+|----------------------+----------|
+|  [2, 10, 16, 24, 26] |    3     |
+|----------------------+----------|
+|  [1, 3, 10, 10, 18]  |    5     |
+-----------------------------------
+
+Zadanie 24.2
+-----------------
+|Pytanie|  P/F  |
+|-------+-------|
+|   1   |       |
+|-------+-------|
+|   2   |   x   |
+|-------+-------|
+|   3   |       |
+-----------------
+
+Zadanie 24.3
+-----------------
+|Pytanie|  P/F  |
+|-------+-------|
+|n div 2|       |
+|-------+-------|
+|  √n   |       |
+|-------+-------|
+|log2 n |   X   |
+-----------------
+'''
+# Zadanie 24.4
+def sprawdzPrzedzial(n, T, a, b):
+    p = szukacz(1, n, b, T)
+    l = szukacz(1, n, a, T)
+    return p - l
+
+
+# Zadanie 25
+
+def czyPalindrom(S):
+    d = len(S)
+    i = d // 2
+    while (i > 0) and (S[i] == S[d - i]):
+        i -= 1
+    if i == 0:
+        return "TAK"
+    else:
+        return "NIE"
+
+'''
+    Algorytm:
+        d ← długość(S)
+        i ← d div 2
+(*)     dopóki (i > 0) i (S[i] = S[d – i+1]) wykonuj
+            i ← i – 1
+        jeżeli i = 0
+            zwróć TAK i zakończ,
+        w przeciwnym razie
+            zwróć NIE i zakończ
+
+Zadanie 25.1
+"AAAAAAAAB"
+'''
+
+# Zadanie 25.2 ignorujemy spacje
+def czyZdaniePalindrom(S):
+    S = str(S)
+    S.replace(' ', '')
+    return czyPalindrom(S)
+
+
+# Zadanie 26
+
+'''
+Zadanie 26.1
+----------------------------------------------
+|        X         |     Y     | Podrzednosc |
+|------------------+-----------+-------------|
+| HHGGFFEEDDCCBBAA |  ABCDEFGH |     TAK     |
+|------------------+-----------+-------------|
+|     DCBADCBA     |  FGHABCJD |    4 TAK    |
+|------------------+-----------+-------------|
+|      ABCDE       |  ABCCBAE  |     NIE     |
+|------------------+-----------+-------------|
+|      AAAAA       |     AA    |    0 TAK    |
+|------------------+-----------+-------------|
+|       ABA        |    ACA    |     NIE     |
+|------------------+-----------+-------------|
+|      ACEGJ       | ABCDEFGHJ |    4 TAK    |
+----------------------------------------------
+
+Dany jest następujący algorytm A:
+    dla i=1,2,…,10 wykonuj
+        Czyjest[i] ← fałsz
+    d ← dlugosc(Y)
+    dla i=1,2,…,d wykonuj
+        lit ← Y[i]
+        Czyjest[kod(lit)] ← prawda
+    d ← dlugosc(X)
+    czyp ← prawda
+    dla i=1,2,…,d wykonuj
+        lit ← X[i]
+        czyp ← czyp i Czyjest[kod(lit)]
+    jeżeli czyp=prawda
+        zwróć 1
+    w przeciwnym razie
+        zwróć 0
+
+Zadanie 26.2
+----------------------------------------------------
+|        X         |     Y     | wynik algorytmu A |
+|------------------+-----------+-------------------|
+| HHGGFFEEDDCCBBAA |  ABCDEFGH |         1         |
+|------------------+-----------+-------------------|
+|     DCBADCBA     |  FGHABCJD |         1         |
+|------------------+-----------+-------------------|
+|      ABCDE       |  ABCCBAE  |         0         |
+|------------------+-----------+-------------------|
+|      AAAAA       |    AA     |         1         |
+|------------------+-----------+-------------------|
+|        AA        |  AAAAA    |         1         |
+|------------------+-----------+-------------------|
+|      ACEGJ       | ABCDEFGHJ |         0         |
+----------------------------------------------------
+Specyfikacja
+Wynik: 1 -> slowa sa podobne; 0 -> slowa nie sa podobne
+
+Zadanie 26.3
+Algorytm B:
+    dla i=1,2,…,10 wykonuj
+        Czy_x[i] ← fałsz
+        Czy_y[i] ← fałsz
+    dx ← dlugosc(X)
+    dla i=1,2,…,dx wykonuj
+        lit ← X[i]
+        Czy_x[kod(lit)] ← prawda
+    dy ← dlugosc(Y)
+    dla i=1,2,…,dy wykonuj
+        lit ← Y[i]
+        Czy_y[kod(lit)] ← prawda
+    k ← 0
+    dla i=1,2,…,10 wykonuj
+        jeżeli Czy_y[i]=prawda oraz Czy_x[i]= prawda
+            k← k + 1
+        jeżeli Czy_y[i]= falsz oraz Czy_x[i]=prawda
+            zwróć −1 i zakończ
+    zwróć k
+'''
+# Zadanie 26.4
+def czyRownowazne(A: str, B: str):
+    litery = []
+    for a in A:
+        if a not in litery:
+            litery.append(a)
+    for b in B:
+        if b not in litery:
+            return 0
+    return 1
+
+
+# Zadanie 27
+
+'''
+Zadanie 27.1
+-----------------------------------
+| Wzorzec |   Tekst    |  Sposob   |
+|---------+------------+-----------|
+|  para   |   opera    | z błędem  |
+|---------+------------+-----------|
+|  para   |   aparat   | dokładnie |
+|---------+------------+-----------|
+|  kran   |  karawana  | z błędem  |
+|---------+------------+-----------|
+|  sport  | bezspornie | z błędem  |
+|---------+------------+-----------|
+|   ryt   |  zakryty   | dokładnie |
+|---------+------------+-----------|
+|  sofa   |  solanka   | z błędem  |
+------------------------------------
+
+Zadanie 27.2
+AAAAAAAA
+AAAA
+'''
+# Zadanie 27.3
+def dopasowanieZBledem(wzorzec, tekst):
+    match = 0
+    for i in range(0, len(tekst) - len(wzorzec) + 1):
+        for j in range(0, len(wzorzec)):
+            if tekst[i + j] == wzorzec[j]:
+                match += 1
+        if match == len(wzorzec) or match == len(wzorzec) - 1:
+            return "TAK"
+    return "NIE"
+
+
+# Zadanie 28
+
+'''
+Zadanie 28.1
+-------------------------------------------
+|   Slowo    | 2a  | 2b  | Czy a p |  Bo  |
+|------------+-----+-----+---------+------|
+|  AABAABAA  | tak | tak |   tak   | AABA |
+|------------+-----+-----+---------+------|
+|  AAABBAAA  | tak | nie |   nie   |      |
+|------------+-----+-----+---------+------|
+|  AAABBAAB  | nie | nie |   nie   |      |
+|------------+-----+-----+---------+------|
+|  AAAABBBB  |     |     |         |      |
+|------------+-----+-----+---------+------|
+|  ABBBABAA  |     |     |         |      |
+|------------+-----+-----+---------+------|
+|  ABAAAABA  |     |     |         |      |
+|------------+-----+-----+---------+------|
+| AAAAAAAAAA |     |     |         |      |
+-------------------------------------------
+
+
+'''
+
+
+# Zadanie 29
+
+'''
+Zadanie 29.1
+MATURA
+
+Zadanie 29.2
+Algorytm(wiadomosc):
+    litera = pusty()
+    kolor_poprzedniej = bialy
+    while kolor_poprzedniej != czarny and wiadomosc[0] != czarny:
+        kulka = pobierz(wiadomosc)
+        kolor_poprzedniej = kulka
+        dolacz(litera, kulka)
+    return litera, wiadomosc
+    
+Zadanie 29.3
+Algorytm(ciag):
+    wiadomosc = pusty()
+    while czy_sa_kulki(ciag):
+        litera = pobierz_litere(ciag)
+        dopisz(wiadomosc, litera)
+    return wiadomosc
+'''
+
+
+# Zadanie 30
+
+'''
+Zadanie 30.1
+szyfruj(zn,k)
+    return (znak(zn) + k - 65) mod 26 + 65
+    
+Zadanie 30.2
+INFORMATYKA => JPISWSHBHUL
+KOMPUTER => LQPTZZLZ
+'''
+def szyfrCezaraZPrzesunieciem(slowo):
+    st = ""
+    k = 1
+    for s in slowo:
+        st += chr((ord(s) + k - 65) % 26 + 65)
+        k += 1
+    return st
+
+# Zadanie 30.3
+def deSzyfrCezaraZPrzesunieciem(slowo):
+    st = ""
+    stt = []
+    k = 1
+    for s in slowo:
+        st += chr((ord(s) - k + 65) % 26 + 65)
+        k += 1
+    return st
+
+
+# Zadanie 31
+
+'''
+Algorytm:
+    n ← dlugosc(W)
+    m ← n div k
+    jeżeli n mod k≠0
+        m←m+1
+    dla i=1,2,…,m wykonuj
+        j←i
+        dopóki j ≤ n wykonuj
+            wypisz W[j]
+            j ← j+m
+'''
+def szyfrSkokowy(k ,W):
+    n = len(W)
+    m = n // k
+    if n % k != 0:
+        m += 1
+    for i in range(1, m+1):
+        j = i
+        while j <= n:
+            print(W[j-1], end="")
+            j = j+m
+
+'''
+Zadanie 31.1
+ZEŁA1ADJTAEWNSEIT
+ZEPA1RDJOAESNSTITE
+
+Zadanie 31.2
+UMIEMDEKODOWAĆ
+DOBRZEJEST
+'''
+
+# Zadanie 31.3
+def deSzyfrSkokowy(k ,W):
+    n = len(W)
+    wynik = [' '] * n
+    m = n // k
+    if n % k != 0:
+        m += 1
+    index = 1
+    for i in range(1, m+1):
+        j = i
+        while j <= n:
+            wynik[j-1] = W[index-1]
+            index += 1
+            #print(W[j-1], end="")
+            j = j+m
+
+    print("".join(wynik))
+
+# Zadanie 32.4
+def szyfrMieszany(k, W):
+    tab = [[] for i in range(k)]
+    n = len(W)
+    m = n // k
+    if n % k != 0:
+        m += 1
+    index = 1
+    for i in range(1, n + 1):
+        x = (i-1) // 4
+        tab[x].append(W[index-1])
+        index += 1
+    for x in range(k):
+        for y in range(m):
+            l = len(tab[x])
+            try:
+                print(tab[x][y], end="")
+            except:
+                return
+
+
+# Zadanie 32
+
+'''
+Zadanie 32.1
+a(cd)a         => acdcda
+(pur)owy       => purpurowy
+(z)(zz)        => zzzzzz
+(ab)a(abcd)    => ababaabcdabcd
+'''
+# Zadanie 32.2
+def czykompresja(n, napis):
+    if n % 2 == 1:
+        return
+    polowa = n // 2
+    if napis[:polowa] == napis[polowa:]:
+        return napis[polowa:]
+    return
+# Zadanie 32.3
+def dekomprsja(n, napis):
+    i = 0
+    while i < n:
+        if napis[i] != '(':
+            print(napis[i], end="")
+            i += 1
+            continue
+        powtorka = ""
+        for j in range(i+1, n):
+            if napis[j] == ')':
+                i = j
+                for p in powtorka:
+                    print(p, end="")
+                for p in powtorka:
+                    print(p, end="")
+            else:
+                powtorka += napis[j]
+        i += 1
+
+
+# Zadanie 33
+
+'''
+Algorytm:
+    dla i=1,2,…,n wykonuj
+        jeżeli A[i,1]>0
+            B[i,1] ← 1
+        w przeciwnym razie
+            B[i,1] ← 0
+    dla j=2,3,…,n wykonuj
+        B[0,j] ← 0
+        B[n+1,j] ← 0
+        dla i=1,2,…,n wykonuj
+            jeżeli A[i,j] ≤0
+                B[i,j] ← 0
+            w przeciwnym razie
+                jeżeli B[i – 1, j – 1]=1 lub B[i, j – 1]=1 lub B[i + 1, j – 1]=1
+                    B[i,j] ← 1
+                w przeciwnym razie
+                    B[i,j] ← 0
+    d ← 0
+    dla i=1,2,…,n wykonuj
+        jeżeli B[i,n]=1
+            d ← 1
+    zwróć d
+
+Zadanie 33.1
+        -----------------------------------------
+        |   1   |   2   |   3   |   4   |   5   |
+|-------+-------+-------+-------+-------+-------|
+|   0   |       |   0   |   0   |   0   |   0   |
+|-------+-------+-------+-------+-------+-------|
+|   1   |   0   |   0   |   1   |   1   |   1   |
+|-------+-------+-------+-------+-------+-------|
+|   2   |   0   |   1   |   1   |   0   |   0   |
+|-------+-------+-------+-------+-------+-------|
+|   3   |   1   |   0   |   0   |   1   |   0   |
+|-------+-------+-------+-------+-------+-------|
+|   4   |   0   |   0   |   0   |   0   |   1   |
+|-------+-------+-------+-------+-------+-------|
+|   5   |   0   |   0   |   0   |   0   |   0   |
+|-------+-------+-------+-------+-------+-------|
+|   6   |       |   0   |   0   |   0   |   0   |
+-------------------------------------------------
+Wartosc: 1
+
+Zadanie 33.2
+typu chodzay
+wartosciach ujemnych
+
+
+Zadanie 33.3
+x = 0
+for koumna
+    znajdz najwieksza liczbe
+    x += najwieksza liczba
+return x 
+
+Zadanie 33.4
+Algorytm:
+    dla i=1,2,…,n wykonuj
+        jeżeli A[i,1]>0
+            B[i,1] ← 1
+        w przeciwnym razie
+            B[i,1] ← 0
+    dla j=2,3,…,n wykonuj
+        B[0,j] ← 0
+        B[n+1,j] ← 0
+        dla i=1,2,…,n wykonuj
+            jeżeli A[i,j] ≤0
+                B[i,j] ← 0
+            w przeciwnym razie
+                jeżeli B[i, j – 1]=1 lub B[i + 1, j – 1]=1
+                    B[i,j] ← 1
+                w przeciwnym razie
+                    B[i,j] ← 0
+    d ← 0
+    dla i=1,2,…,n wykonuj
+        jeżeli B[i,n]=1
+            d ← 1
+    zwróć d
+'''
+
+
+# Zadnie 34
+
+'''
+Bajtek = 7
+Bitus = 128
+'''
+
+# Zadanie 35
+
+'''
+Zadanie 35 a
+-------------------------
+| nr pyt|   P   |   F   |
+|-------+-------+-------|
+|   A   |       |   X   |
+|-------+-------+-------|
+|   B   |   X   |       |
+|-------+-------+-------|
+|   C   |       |   X   |
+|-------+-------+-------|
+|   D   |   X   |       |
+-------------------------
+
+Zadanie 35 b
+C = 111
+M = 1111
+x = 15.5
+
+Zadanie 35 c
+C = 000
+M = 0000
+x = 0.0625
+'''
+
+# Zadanie 36
+
+'''
+Zadanie 36
+Wieczorek
+Iwanicka
+'''
+
+# Zadanie 37
+
+'''
+Zadanie 37
+winogrona
+maliny
+orzechy
+'''
+
+
+# Zadanie 38
+
+'''
+Zadanie 38
+Katowice 3
+Kraków 2
+Warszawa 2
+'''
+
+
+# Zadanie 39
+
+'''
+Zadanie 39.1
+aquapark2 bo ma mniejszy rozmiar
+
+Zadanie 39.2
+TIFF
+
+Zadanie 39.3
+6120
+'''
+
+# Zadanie 40
+
+'''
+Zadanie 40
+LICZ.JEŻELI(A1:A200;"=5")
+'''
+
+# Zadanie 41
+
+'''
+Zadanie 41
+tekstowy
+'''
+
+# Zadanie 42
+
+'''
+Algorytm:
+    x ← T[1]
+    i ← 0
+    j ← n+1
+    wykonuj
+        wykonuj
+            j ← j-1
+(*)     dopóki T[j] > x wykonuj
+            i ← i+1
+(**)    dopóki T[i] < x
+        jeżeli i < j
+(***)       zamień(T[i] T[j])
+        w przeciwnym razie
+            zakończ
+
+Algorytm            
+    x ← T[1]
+    i ← 0
+    j ← n+1
+    wykonuj
+(*)     wykonuj T[j] > x
+            j ← j - 1
+(**)    wykonuj  T[i] < x
+            i ← i + 1
+        jeżeli i < j
+(***)       zamień(T[i], T[j])
+        w przeciwnym razie
+            return
+
+'''
+
+def ciekawyAlgorytm(T):
+    n = len(T)
+    x = T[1-1]
+    i = 0
+    j = n + 1
+    while True:
+        while T[j-1] > x:
+            j = j - 1
+        while T[i-1] < x:
+            i = i + 1
+        if i < j:
+            T[i-1], T[j-1] = T[j-1], T[i-1]
+        else:
+            return
+
+
+'''    
+Zadanie 42.1
+-------------------------------------------------
+|               T               |   *   |  **   |
+|-------------------------------+-------+-------|
+|   4, 2, 5, 8, 1, 9, 7, 6, 3   |       |       |
+|-------------------------------+-------+-------|
+| 5, 4, 3, 2, 1, 6, 7, 8, 9, 10 |       |       |
+|-------------------------------+-------+-------|
+|      1, 2, 3, ... , 100       |       |       |
+|-------------------------------+-------+-------|
+|     100, 99, 98, ... , 1      |       |       |
+-------------------------------------------------
+'''
+
+
+# Zadanie 43
+
+'''
+Zadanie 43.1
+wyszukiwanie optymalnej trasy samochodowej => musze wiedziec gdzie jestem jezeli chce gdzies pojechac
+serwis pogodowy => fajnie jest znac pogode w swojej okolicy
+
+Zadanie 43.2
+kompilator języka programowania => niepotrzebne
+system komputerowego składu tekstu => niepotrzebne
+
+Zadanie 43.3
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |       |   X   |
+|---------+-------+-------|
+|    2    |   X   |       |
+|---------+-------+-------|
+|    3    |       |   X   |
+|---------+-------+-------|
+|    4    |   X   |       |
+---------------------------
+
+Zadanie 43.4
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |       |   X   |
+|---------+-------+-------|
+|    2    |   X   |       |
+|---------+-------+-------|
+|    3    |   X   |       |
+|---------+-------+-------|
+|    4    |       |   X   |
+|---------+-------+-------|
+|    5    |   X   |       |
+---------------------------
+
+'''
+
+
+# Zadanie 44
+
+'''
+Zadanie 44
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |   X   |       |
+|---------+-------+-------|
+|    2    |   X   |       |
+|---------+-------+-------|
+|    3    |       |   X   |
+|---------+-------+-------|
+|    4    |   X   |       |
+---------------------------
+'''
+
+
+# Zadanie 45
+
+'''
+Zadanie 45
+procesor
+pamięć operacyjna
+'''
+
+
+# Zadanie 46
+
+'''
+Zadanie 46
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |   X   |       |
+|---------+-------+-------|
+|    2    |       |   X   |
+|---------+-------+-------|
+|    3    |       |   X   |
+|---------+-------+-------|
+|    4    |   X   |       |
+---------------------------
+'''
+
+
+# Zadanie 47
+
+'''
+Zadanie 47
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |       |   X   |
+|---------+-------+-------|
+|    2    |   X   |       |
+|---------+-------+-------|
+|    3    |       |   X   |
+|---------+-------+-------|
+|    4    |   X   |       |
+---------------------------
+'''
+
+
+# Zadanie 48
+
+'''
+Zadanie 48
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |       |       |
+|---------+-------+-------|
+|    2    |       |       |
+|---------+-------+-------|
+|    3    |       |       |
+|---------+-------+-------|
+|    4    |       |       |
+---------------------------
+'''
+
+
+# Zadanie 49
+
+'''
+Zadanie 49
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |   X   |       |
+|---------+-------+-------|
+|    2    |   X   |       |
+|---------+-------+-------|
+|    3    |       |   X   |
+|---------+-------+-------|
+|    4    |   X   |       |
+---------------------------
+'''
+
+
+# Zadanie 50
+
+'''
+Zadanie 50
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |       |   X   |
+|---------+-------+-------|
+|    2    |   X   |       |
+|---------+-------+-------|
+|    3    |       |   X   |
+|---------+-------+-------|
+|    4    |   X   |       |
+---------------------------
+'''
+
+
+# Zadanie 51
+
+'''
+Zadanie 51
+---------------------------
+| pytanie | brute |  psy  |
+|---------+-------+-------|
+|    A    |   X   |   X   |
+|---------+-------+-------|
+|    B    |       |   X   |
+|---------+-------+-------|
+|    C    |   X   |       |
+|---------+-------+-------|
+|    D    |       |   X   |
+---------------------------
+'''
+
+
+# Zadanie 52
+
+'''
+Zadanie 52
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |   X   |       |
+|---------+-------+-------|
+|    2    |   X   |       |
+|---------+-------+-------|
+|    3    |       |   X   |
+|---------+-------+-------|
+|    4    |       |   X   |
+---------------------------
+'''
+
+
+# Zadanie 53
+
+'''
+Zadanie 53.1
+1: 09:20:15
+2: 23:10:36
+
+Zadanie 53.2
+     X
+  XX  
+XX  X 
+ X X X
+'''
+
+
+# Zadanie 54
+
+'''
+Zadanie 54
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |   X   |       |
+|---------+-------+-------|
+|    2    |       |   X   |
+|---------+-------+-------|
+|    3    |       |   X   |
+|---------+-------+-------|
+|    4    |   X   |       |
+---------------------------
+'''
+
+
+# Zadanie 55
+
+def F(n):
+    if n == 1:
+        return 1
+    else:
+        return F(n//2)+1
+
+'''
+F(n)
+    jeżeli n = 1, zwróć 1 i zakończ
+    w przeciwnym razie zwróć F(n div 2) + 1
+
+Zadanie 55.1
+logarytmiczna
+
+Zadanie 55.2
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |       |   X   |
+|---------+-------+-------|
+|    2    |   X   |       |
+|---------+-------+-------|
+|    3    |   X   |       |
+|---------+-------+-------|
+|    4    |       |   X   |
+---------------------------
+'''
+
+
+# Zadanie 56
+
+'''
+Zadanie 56
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |   X   |       |
+|---------+-------+-------|
+|    2    |       |   X   |
+|---------+-------+-------|
+|    3    |   X   |       |
+|---------+-------+-------|
+|    4    |       |   X   |
+---------------------------
+'''
+
+
+# Zadanie 57
+
+'''
+Zadanie 57
+---------------------------
+| pytanie |   P   |   F   |
+|---------+-------+-------|
+|    1    |   X   |       |
+|---------+-------+-------|
+|    2    |   X   |       |
+|---------+-------+-------|
+|    3    |       |   X   |
+|---------+-------+-------|
+|    4    |   X   |       |
+---------------------------
+'''
+
+
+
+
+
 
 
 # funkcja main
 if __name__ == '__main__':
     #tutaj wywoluj swoje funkcje i inne takie
-    print(schematHornera(7, 2, [9, 7, -5, 2, 0, -3, 4]))
-
-
+    print(ciekawyAlgorytm([4, 2, 5, 8, 1, 9, 7, 6, 3]))
 
 
 '''
@@ -1495,13 +2460,3 @@ if __name__ == '__main__':
 |       |       |
 -----------------
 '''
-
-
-
-
-
-
-
-
-
-
